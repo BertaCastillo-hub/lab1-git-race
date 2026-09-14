@@ -1,3 +1,9 @@
+/**
+ * Web controllers for the Hello sample application.
+ *
+ * Includes the MVC controller for the welcome view and the REST controller
+ * that exposes the greeting in JSON format.
+ */
 package es.unizar.webeng.hello.controller
 
 import es.unizar.webeng.hello.service.GreetingService
@@ -10,11 +16,25 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
+/**
+ * MVC controller that handles the welcome page.
+ *
+ * @property greetingService service responsible for building the greeting.
+ */
 @Controller
 class HelloController(
     private val greetingService: GreetingService
 ) {
     
+    /**
+     * Handles GET requests to the root path.
+     *
+     * @param model Spring MVC model where attributes for the view are added.
+     * @param name name of the person to greet; defaults to an empty string.
+     * @param lang optional language code explicitly requested.
+     * @param acceptLanguage value of the HTTP Accept-Language header, if present.
+     * @return the name of the "welcome" view.
+     */
     @GetMapping("/")
     fun welcome(
         model: Model,
@@ -31,11 +51,24 @@ class HelloController(
     }
 }
 
+/**
+ * REST controller that exposes the greeting as a JSON API.
+ *
+ * @property greetingService service responsible for building the greeting.
+ */
 @RestController
 class HelloApiController(
     private val greetingService: GreetingService
 ) {
     
+    /**
+     * Handles GET requests to `/api/hello` and returns the greeting as JSON.
+     *
+     * @param name name of the person to greet; defaults to "World".
+     * @param lang optional language code explicitly requested.
+     * @param acceptLanguage value of the HTTP Accept-Language header, if present.
+     * @return map containing the message, language, time of day, and timestamp.
+     */
     @GetMapping("/api/hello", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun helloApi(
         @RequestParam(defaultValue = "World") name: String,
