@@ -38,3 +38,8 @@ src/test/kotlin/IntegrationTest.kt
 ## License
 
 MIT — see `LICENSE`.
+
+## Aditions
+
+- Time-dependent greeting, with support for English and Spanish.
+- Server-side language selection for the greeting based on the parameters used by the client.

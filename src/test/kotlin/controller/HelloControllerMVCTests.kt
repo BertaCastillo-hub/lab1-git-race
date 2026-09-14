@@ -50,27 +50,27 @@ class HelloControllerMVCTests {
             .andExpect(model().attribute("name", equalTo("Developer")))
     }
 
-            /**
-             * Tests that the query parameter `lang` takes precedence over the `Accept-Language` header.
-             */
-            @Test
-            fun `query language takes precedence over Accept-Language`() {
-            mockMvc.perform(get("/").param("lang", "en").header("Accept-Language", "es"))
-                .andExpect(status().isOk)
-                .andExpect(model().attribute("language", equalTo("en")))
-                .andExpect(model().attribute("message", containsString("Good ")))
-            }
+    /**
+     * Tests that the query parameter `lang` takes precedence over the `Accept-Language` header.
+     */
+    @Test
+    fun `query language takes precedence over Accept-Language`() {
+    mockMvc.perform(get("/").param("lang", "en").header("Accept-Language", "es"))
+        .andExpect(status().isOk)
+        .andExpect(model().attribute("language", equalTo("en")))
+        .andExpect(model().attribute("message", containsString("Good ")))
+    }
 
-            /**
-             * Tests that the `Accept-Language` header is used when the `lang` parameter is absent.
-             */
-            @Test
-            fun `should use Accept-Language when lang is absent`() {
-            mockMvc.perform(get("/").header("Accept-Language", "es"))
-                .andExpect(status().isOk)
-                .andExpect(model().attribute("language", equalTo("es")))
-                .andExpect(model().attribute("message", containsString("Buenas ")))
-            }
+    /**
+     * Tests that the `Accept-Language` header is used when the `lang` parameter is absent.
+     */
+    @Test
+    fun `should use Accept-Language when lang is absent`() {
+    mockMvc.perform(get("/").header("Accept-Language", "es"))
+        .andExpect(status().isOk)
+        .andExpect(model().attribute("language", equalTo("es")))
+        .andExpect(model().attribute("message", containsString("Buenas ")))
+    }
     
     /**
      * Tests that the API endpoint returns a JSON response with the expected fields.
