@@ -1,0 +1,38 @@
+.gradle/
+build/
+.kotlin/
+bin/
+out/
+
+# Wrapper jar must be tracked
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.classpath
+.project
+.settings/
+.factorypath
+.springBeans
+.sts4-cache
+.apt_generated
+
+# OS / junk
+.DS_Store
+Thumbs.db
+*.log
+hs_err_pid*
+*.hprof
+*.tmp
+
+# Local secrets (never commit)
+.env
+.env.local
+
+gradle-app.setting
+.gradletasknamecache

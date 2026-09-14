@@ -1,0 +1,31 @@
+/* Universidad Zaragoza Logo Styles */
+.navbar-logo {
+    width: 50px !important;
+    height: 50px !important;
+    max-width: none !important;
+    max-height: none !important;
+}
+
+.main-logo {
+    width: 200px !important;
+    height: 50px !important;
+    max-width: none !important;
+    max-height: none !important;
+}
+
+/* HTTP Debug Section Styles */
+.http-debug-request {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    min-height: 200px;
+}
+
+.http-debug-response {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    min-height: 200px;
+}
+
+
+
+

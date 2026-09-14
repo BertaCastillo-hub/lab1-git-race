@@ -1,0 +1,15 @@
+# Dev image: JDK 25, Gradle wrapper, LiveReload on 35729
+FROM eclipse-temurin:25-jdk-alpine
+
+RUN apk add --no-cache wget
+WORKDIR /app
+COPY . .
+RUN chmod +x ./gradlew
+RUN ./gradlew dependencies --no-daemon
+
+EXPOSE 8080 35729
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
+
+CMD ["./gradlew", "bootRun"]
