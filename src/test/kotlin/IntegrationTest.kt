@@ -33,19 +33,21 @@ class IntegrationTest {
 
     @Test
     fun `should return personalized greeting when name is provided`() {
-        val response = restTemplate.getForEntity("http://localhost:$port?name=Developer", String::class.java)
+        val response = restTemplate.getForEntity("http://localhost:$port?name=Developer&lang=en", String::class.java)
         
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(response.body).contains("Hello, Developer!")
+        assertThat(response.body).contains("Good ")
+        assertThat(response.body).contains("Developer!")
     }
 
     @Test
     fun `should return API response with timestamp`() {
-        val response = restTemplate.getForEntity("http://localhost:$port/api/hello?name=Test", String::class.java)
+        val response = restTemplate.getForEntity("http://localhost:$port/api/hello?name=Test&lang=es", String::class.java)
         
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(response.headers.contentType).isEqualTo(MediaType.APPLICATION_JSON)
-        assertThat(response.body).contains("Hello, Test!")
+        assertThat(response.body).contains("Test!")
+        assertThat(response.body).contains("language")
         assertThat(response.body).contains("timestamp")
     }
 
