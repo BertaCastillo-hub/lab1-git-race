@@ -6,8 +6,6 @@ Do not invent a percentage of “AI vs original” lines. Empty or fake disclosu
 
 ## What I specified
 
-[The increment you decided to add *before* generating or pasting code. How you would know it works.]
-
 I decided to add two related functionalities to the greeting logic.
 
 In the first place, I specified server-side language selection. A client can send a `lang` query
@@ -25,7 +23,7 @@ the unit, MVC, and integration tests pass.
 
 ## What I changed
 
-[Files and behaviour. Not a restatement of the starter README.]
+To add the new functionality I changed the controller file, added a service file with the new logic and modified the test scripts.
 
 - **HelloController.kt**: the page controller (HelloController) now reads `name`, `lang`, and
     `Accept-Language`, and sends the result from the service to Thymeleaf. The API
@@ -44,8 +42,6 @@ the unit, MVC, and integration tests pass.
 - **IntegrationTest.kt**: updated end-to-end checks for the new server and JSON behaviour.
 
 ## Technical decisions
-
-[Choices you own: API shape, tests, data, what you rejected.]
 
 - Keep the same API endpoints but adding the necessary parameters for the new functionality.
 - The hours considered are:
@@ -68,8 +64,6 @@ the unit, MVC, and integration tests pass.
 
 ## How I verified
 
-[Commands (`./gradlew check`), what failed first, what you fixed. You remain accountable for correctness.]
-
 I ran the following commands:
 
 ```text
@@ -79,12 +73,27 @@ I ran the following commands:
 
 After the controller change, the first test run failed during test compilation because the old tests still called the previous constructors and method signatures. 
 
-I updated
-those tests to construct `GreetingService` with a fixed `Clock` and to pass the new
+I updated those tests to construct `GreetingService` with a fixed `Clock` and to pass the new
 language arguments. I also removed a time-specific MVC assertion so that it checks the
 response structure without depending on the real machine time.
 
 After these changes, `./gradlew test` completed successfully. With the `./gradlew check` command I made sure that the project configuration was correct and that there were no compilation problems.
+
+I also tested the new functionality trough the web page, making sure that the greeting complied with the time and language restriction (via both `Accept-Language` and `lang` parameter). To access the web page, it is necessary to run this command:
+
+```bash
+./gradlew bootRun
+```
+
+Examples of URLs used to test the functionality:
+
+http://127.0.0.1:8080/api/hello?name=Berta&lang=en :
+Provides a JSON time-dependent response in English and personalized to Berta.
+
+http://127.0.0.1:8080/api/hello :
+Provides a JSON time-dependent response in the language configured in the browser and personalized to World (default name).
+
+http://127.0.0.1:8080/?name=Berta&lang=es : Provides a greeting in the main web page in Spanish and personalized to Berta.
 
 ## AI disclosure
 
@@ -97,17 +106,15 @@ After these changes, `./gradlew test` completed successfully. With the `./gradle
 - **Representative prompts:**
     - "Make a plan for a server-decided greeting based on time of day and
         Accept-Language/lang, shown in both the page and JSON."
-    - "Add a new test to this file that checks that the query parameter `lang` takes precedence over the `Accept-Language` header."
     - "Add KDoc documentation to this `.kt` file."
 - **Affected files/sections:** the implementation assistance affected
     `src/main/kotlin/service/GreetingService.kt`,
     `src/main/kotlin/controller/HelloController.kt` and integration tests. Documentation assistance affected also the test files.
 
-- **Validation steps:** I reviewed the generated changes, fixed the old test calls
-    after the first compilation failure, and ran `./gradlew test` successfully. I also
+- **Validation steps:** I reviewed the generated code changes and ran `./gradlew test`. As it failed the first time, I fixed the old test calls
+    for no compilation failure and ran the test command again, successfully. I also
     ran the project checks before submission and reviewed the final diff.
 - **Citations:** none. No external snippets were copied or adapted.
-- **Human-reviewed:** I reviewed every line of code that was generated with AI. I chose the API precedence, supported languages, time ranges and injected `Clock`. I checked the controller signatures, the
+- **Human-reviewed:** I reviewed every line of code that was generated with AI. I chose the new functionality, API structure, supported languages, time ranges and injected `Clock`. I checked the controller signatures, the
     response fields, the template language attribute and the test assertions. I
-    rejected client-only greeting logic because they were not
-    needed for this increment.
+    rejected client-only greeting logic.
