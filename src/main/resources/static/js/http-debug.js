@@ -445,7 +445,7 @@ This is how professional Spring Boot developers work!`);
         setInterval(checkConnection, 1000);
         
         // Additional method: Check if page content has changed
-        let lastPageContent = '';
+        /*let lastPageContent = '';
         setInterval(() => {
             if (isReloading) {
                 fetch('/')
@@ -471,7 +471,7 @@ This is how professional Spring Boot developers work!`);
                         // Ignore errors
                     });
             }
-        }, 2000);
+        }, 2000);*/
         
         // Additional check: Monitor for page visibility changes
         let lastCheckTime = Date.now();

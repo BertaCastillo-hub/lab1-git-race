@@ -47,6 +47,19 @@ class RateLimitFilter : Filter {
      */
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         val req = request as HttpServletRequest
+
+        val path = req.requestURI
+
+        // Does not count as requests for the rate limit, so we just continue the chain
+        if (path.startsWith("/actuator") || 
+            path.startsWith("/css") || 
+            path.startsWith("/js") || 
+            path.startsWith("/assets") || 
+            path.startsWith("/webjars")) {
+            chain.doFilter(request, response)
+            return
+        }
+
         val res = response as HttpServletResponse
 
         // Identify the client IP.
@@ -61,7 +74,7 @@ class RateLimitFilter : Filter {
         requests.removeIf { it.isBefore(oneMinuteAgo) }
 
         // Check if it exceeds the limit (10 requests)
-        if (requests.size >= 20) {
+        if (requests.size >= 10) {
             // Return error 429 Too Many Requests
             res.status = 429
             res.contentType = "application/json"
