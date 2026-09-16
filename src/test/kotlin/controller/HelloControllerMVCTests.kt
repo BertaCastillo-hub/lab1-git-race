@@ -55,10 +55,10 @@ class HelloControllerMVCTests {
      */
     @Test
     fun `query language takes precedence over Accept-Language`() {
-    mockMvc.perform(get("/").param("lang", "en").header("Accept-Language", "es"))
-        .andExpect(status().isOk)
-        .andExpect(model().attribute("language", equalTo("en")))
-        .andExpect(model().attribute("message", containsString("Good ")))
+        mockMvc.perform(get("/").param("lang", "en").header("Accept-Language", "es"))
+            .andExpect(status().isOk)
+            .andExpect(model().attribute("language", equalTo("en")))
+            .andExpect(model().attribute("message", containsString("Good ")))
     }
 
     /**
@@ -66,10 +66,11 @@ class HelloControllerMVCTests {
      */
     @Test
     fun `should use Accept-Language when lang is absent`() {
-    mockMvc.perform(get("/").header("Accept-Language", "es"))
-        .andExpect(status().isOk)
-        .andExpect(model().attribute("language", equalTo("es")))
-        .andExpect(model().attribute("message", containsString("Buenas ")))
+        mockMvc.perform(get("/").header("Accept-Language", "es"))
+            .andExpect(status().isOk)
+            .andExpect(model().attribute("language", equalTo("es")))
+            // We expect 'Buen' because the posibilities are 'Buenos' or 'Buenas'
+            .andExpect(model().attribute("message", containsString("Buen")))
     }
     
     /**
