@@ -28,6 +28,12 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 @Component
 @Order(1)
+// To be able to disable the filter in tests
+@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(
+    name = ["rate.limit.enabled"],
+    havingValue = "true",
+    matchIfMissing = true // Active in production by default
+)
 class RateLimitFilter : Filter {
 
     // In-memory log: associates each IP with a list of timestamps of its requests

@@ -11,7 +11,10 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+    webEnvironment = WebEnvironment.RANDOM_PORT,
+    properties = ["rate.limit.enabled=false"] // Disable filter for this test
+)
 @AutoConfigureTestRestTemplate
 class IntegrationTest {
     @LocalServerPort

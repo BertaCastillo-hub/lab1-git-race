@@ -17,7 +17,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
-@WebMvcTest(HelloController::class, HelloApiController::class)
+@WebMvcTest(
+    controllers = [HelloController::class, HelloApiController::class],
+    excludeFilters = [org.springframework.context.annotation.ComponentScan.Filter(
+        type = org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE,
+        classes = [es.unizar.webeng.hello.filter.RateLimitFilter::class]
+    )]
+)
 @Import(es.unizar.webeng.hello.service.GreetingService::class)
 class HelloControllerMVCTests {
     @Autowired
