@@ -27,7 +27,7 @@ kotlin {
     }
 }
 
-extra.set("springCloudVersion", "2023.0.3")
+extra.set("springCloudVersion", "2024.0.0")
 
 dependencyManagement {
     imports {

@@ -1,7 +1,6 @@
 package es.unizar.webeng.hello.filter
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate
@@ -23,9 +22,6 @@ class RateLimitFilterTests {
 
     @Autowired
     private lateinit var restTemplate: TestRestTemplate
-
-    @Autowired
-    private lateinit var rateLimitFilter: RateLimitFilter
 
     @Test
     fun `should allow 10 requests and block the 11th with 429 Too Many Requests`() {

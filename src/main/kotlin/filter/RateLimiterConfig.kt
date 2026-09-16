@@ -4,16 +4,19 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import io.github.bucket4j.caffeine.CaffeineProxyManager
 import io.github.bucket4j.distributed.proxy.AsyncProxyManager
 import io.github.bucket4j.distributed.remote.RemoteBucketState
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.cloud.gateway.server.mvc.filter.Bucket4jFilterFunctions.rateLimit
 import org.springframework.cloud.gateway.server.mvc.handler.GatewayRouterFunctions.route
 import org.springframework.cloud.gateway.server.mvc.handler.HandlerFunctions.http
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.web.servlet.function.RequestPredicates
 import org.springframework.web.servlet.function.RouterFunction
 import org.springframework.web.servlet.function.ServerResponse
 import java.time.Duration
 
 @Configuration
+@ConditionalOnProperty(name = ["rate.limit.enabled"], havingValue = "true", matchIfMissing = true)
 class RateLimiterConfig {
 
     // Bean to manage the in-memory storage and expiration of buckets using Caffeine.
@@ -29,6 +32,10 @@ class RateLimiterConfig {
     // Declarative configuration of the route with the RateLimiter filter integrated
     @Bean
     fun gatewayRouter(): RouterFunction<ServerResponse> {
+        // Exclude /actuator/** from rate limiting
+        val rateLimitedPaths = RequestPredicates.path("/**")
+            .and(RequestPredicates.path("/actuator/**").negate())
+
         return route("rate_limit_route")
             .GET("/**", http())
             .filter(
