@@ -1,5 +1,6 @@
 package es.unizar.webeng.hello.filter
 
+import io.github.bucket4j.Bucket
 import jakarta.servlet.Filter
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletRequest
@@ -8,22 +9,21 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
-import java.time.Instant
+import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.CopyOnWriteArrayList
 
 /**
- * Servlet filter that limits the number of requests accepted from each client IP address.
+ * Servlet filter that limits the number of requests accepted from each client IP address
+ * using Bucket4j.
  *
  * The filter allows a maximum of 10 requests per IP address within a one-minute
- * sliding time window. Requests older than one minute are removed from the
- * in-memory request history before checking the limit.
+ * window.
  *
  * When the limit is exceeded, the filter responds with HTTP status 429
  * and prevents the request from reaching the rest of the filter chain.
  *
  * Request history is stored in memory and is maintained separately for each
- * client IP address. The concurrent collections used by this class allow the
+ * client IP address. The concurrent collection used by this class allow the
  * filter to be safely accessed by multiple requests concurrently.
  */
 @Component
@@ -36,16 +36,21 @@ import java.util.concurrent.CopyOnWriteArrayList
 )
 class RateLimitFilter : Filter {
 
-    // In-memory log: associates each IP with a list of timestamps of its requests
-    private val requestLog = ConcurrentHashMap<String, CopyOnWriteArrayList<Instant>>()
+    // Map storing a Bucket per client IP address
+    private val buckets = ConcurrentHashMap<String, Bucket>()
+
+    private fun createNewBucket(): Bucket {
+        return Bucket.builder()
+            .addLimit { limit -> limit.capacity(10).refillGreedy(10, Duration.ofMinutes(1)) }
+            .build()
+    }
 
      /**
      * Filters incoming HTTP requests and applies the rate limit.
      *
-     * Requests older than one minute are removed from the client's request
-     * history. If the client has already made 10 or more requests during
+     * If the client has already made 10 or more requests during
      * the current one-minute window, the request is rejected with HTTP 429.
-     * Otherwise, the current request is recorded and the filter chain continues.
+     * Otherwise, it extracts a token from their bucket and the filter chain continues.
      *
      * @param request the incoming servlet request
      * @param response the servlet response
@@ -68,30 +73,26 @@ class RateLimitFilter : Filter {
 
         val res = response as HttpServletResponse
 
-        // Identify the client IP.
+        // Identify the client IP and get or create its bucket
         val clientIp = req.remoteAddr
-        val now = Instant.now()
-        val oneMinuteAgo = now.minusSeconds(60)
+        val bucket = buckets.computeIfAbsent(clientIp) { createNewBucket() }
 
-        // Recover the request history for that IP (or create a new one if it doesn't exist)
-        val requests = requestLog.computeIfAbsent(clientIp) { CopyOnWriteArrayList() }
-
-        // Clean that IP history by removing requests older than 1 minute
-        requests.removeIf { it.isBefore(oneMinuteAgo) }
-
-        // Check if it exceeds the limit (10 requests)
-        if (requests.size >= 10) {
+        // Each request consumes one token from the bucket. If the bucket is empty,
+        // the limit has been exceeded
+        if (bucket.tryConsume(1)) {
+            chain.doFilter(request, response)
+        } else {
             // Return error 429 Too Many Requests
             res.status = 429
             res.contentType = "application/json"
             res.writer.write("""{"error": "Too Many Requests", "message": "Rate limit exceeded. Try again in a minute."}""")
-            
-            // We stop the request from getting to the controllers
-            return
         }
+    }
 
-        // It is valid, we log the current request and continue the chain
-        requests.add(now)
-        chain.doFilter(request, response)
+    /**
+     * Clears all recorded buckets
+     */
+    fun reset() {
+        buckets.clear()
     }
 }

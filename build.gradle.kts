@@ -46,6 +46,8 @@ dependencies {
     testImplementation(libs.spring.boot.starter.webmvc.test)
     testImplementation(libs.spring.boot.restclient)
     testImplementation(libs.spring.boot.resttestclient)
+
+    implementation("com.bucket4j:bucket4j-core:8.10.1")
 }
 
 tasks.withType<Test> {
