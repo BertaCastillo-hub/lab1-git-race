@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.spring)
     alias(libs.plugins.spring.boot)
+    id("io.spring.dependency-management") version "1.1.7"
 }
 
 group = "es.unizar.webeng"
@@ -23,6 +24,14 @@ kotlin {
     jvmToolchain(25)
     compilerOptions {
         freeCompilerArgs.add("-Xjsr305=strict")
+    }
+}
+
+extra.set("springCloudVersion", "2023.0.3")
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${extra.get("springCloudVersion")}")
     }
 }
 
@@ -48,6 +57,10 @@ dependencies {
     testImplementation(libs.spring.boot.resttestclient)
 
     implementation("com.bucket4j:bucket4j-core:8.10.1")
+
+    implementation("org.springframework.cloud:spring-cloud-starter-gateway-mvc")
+    implementation("com.bucket4j:bucket4j-caffeine:8.10.1")
+    implementation("com.github.ben-manes.caffeine:caffeine")
 }
 
 tasks.withType<Test> {
