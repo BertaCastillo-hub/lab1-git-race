@@ -27,7 +27,7 @@ kotlin {
     }
 }
 
-extra.set("springCloudVersion", "2024.0.0")
+extra.set("springCloudVersion", "2025.1.2")
 
 dependencyManagement {
     imports {
@@ -58,7 +58,7 @@ dependencies {
 
     implementation("com.bucket4j:bucket4j-core:8.10.1")
 
-    implementation("org.springframework.cloud:spring-cloud-starter-gateway-mvc")
+    implementation("org.springframework.cloud:spring-cloud-starter-gateway-server-webmvc")
     implementation("com.bucket4j:bucket4j-caffeine:8.10.1")
     implementation("com.github.ben-manes.caffeine:caffeine")
 }
