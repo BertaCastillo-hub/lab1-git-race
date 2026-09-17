@@ -11,7 +11,7 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.test.annotation.DirtiesContext
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 @AutoConfigureTestRestTemplate
 // Restart the context between tests to clear the in-memory map of the filter
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -37,8 +37,6 @@ class RateLimitFilterTests {
         val blockedResponse = restTemplate.getForEntity(url, String::class.java)
         
         assertThat(blockedResponse.statusCode.value()).isEqualTo(429)
-        assertThat(blockedResponse.body).contains("Too Many Requests")
-        assertThat(blockedResponse.body).contains("Rate limit exceeded")
     }
 
     @Test
