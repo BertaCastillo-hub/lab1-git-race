@@ -41,5 +41,20 @@ MIT — see `LICENSE`.
 
 ## Aditions
 
-- Time-dependent greeting, with support for English and Spanish.
-- Server-side language selection for the greeting based on the parameters used by the client.
+- ***main* branch**:
+    - Time-dependent greeting, with support for English and Spanish.
+    - Server-side language selection for the greeting based on the parameters used by the client.
+    - New tests to check the behavour.
+- ***feature/traffic_control* branch**:
+    - Global servlet-rate limiter to limit the number of requests allowed to 10 per minute per IP.
+    - 429 error status when the quota is reached, without forwarding the request to the controller.
+    - Exclusion of `/actuator/health` from the limiter.
+    - New tests to check the behaviour.
+- ***feature/traffic_control_bucket4j* branch**:
+    - Replacement of the manual map-based limiter with Bucket4j token buckets.
+    - More scalable and cleaner per-IP quota control.
+    - Retained the same 429 behavior, exclusion rules and tests.
+- ***feature/traffic_control_gateway* branch**:
+    - Migration of rate limiting to Spring Cloud Gateway Server WebMVC.
+    - Use of Caffeine-backed bucket storage.
+    - Retained the same 429 behavior, exclusion rules and tests.
