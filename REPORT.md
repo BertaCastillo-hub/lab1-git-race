@@ -25,7 +25,7 @@ I would know that the bonus works when it only allows 10 requests per minute to 
 ## 2. What I changed
 
 ### Objective
-To add the new functionality I changed the controller file, added a service file with the new logic and modified the test scripts.
+To add the new functionality I changed the controller file, added a service file with the new logic and modified the test scripts, in the *main* branch.
 
 - **HelloController.kt**: the page controller (HelloController) now reads `name`, `lang`, and the `Accept-Language` header, and sends the result from the service to Thymeleaf. The API controller (HelloApiController) uses the same service and returns `message`, `language`, `timeOfDay`, and the existing `timestamp` fields.
 - **GreetingService.kt**: added the shared server-side greeting logic. It supports English and Spanish, selecting the language specified in the `lang` attribute or the first supported language from `Accept-Language`. It falls back to English when neither of them exist or for an unsupported or malformed value.
@@ -33,13 +33,15 @@ To add the new functionality I changed the controller file, added a service file
 - **HelloControllerMVCTests.kt**: added web-layer checks for query language, header language, precedence and the JSON response.
 - **HelloControllerUnitTests.kt**: adapted controller tests to the service and its new request arguments.
 - **GreetingServiceTests.kt**: added deterministic tests for morning, afternoon, night, language precedence, header fallback and unsupported languages.
-- **IntegrationTest.kt**: updated end-to-end checks for the new server and JSON behaviour.
+- **IntegrationTest.kt**: updated end-to-end checks for the new server and JSON behavior.
 
 ### Bonus
 
-- **`feature/traffic_control` branch:** Added **RateLimitFilter.kt** mapped globally to intercept all routes. Removed a 2-second periodic polling function from **http-debug.js** to avoid false positives in the filter. Updated **ci.yml** to trigger continuous integration on all `feature/*` branches. Added **RateLimitFilterTest.kt**.
-- **`feature/traffic_control_bucket4j` branch:** Modified **RateLimitFilter.kt** to replace manual timestamp maps with Bucket4j buckets.
-- **`feature/traffic_control_gateway` branch:** Removed **RateLimitFilter.kt** entirely. Added **RateLimiterConfig.kt** to configure Spring Boot, Spring Cloud Gateway, and Caffeine. Refactored integration, MVC, and filter tests to support the new framework routing.
+I made the additions in three different branches.
+
+- ***feature/traffic_control* branch:** Added **RateLimitFilter.kt** mapped globally to intercept all routes. Removed a 2-second periodic polling function from **http-debug.js** to avoid false positives in the filter. Updated **ci.yml** to trigger continuous integration on all `feature/*` branches. Added **RateLimitFilterTest.kt**.
+- ***feature/traffic_control_bucket4j* branch:** Modified **RateLimitFilter.kt** to replace manual timestamp maps with Bucket4j buckets.
+- ***feature/traffic_control_gateway* branch:** Removed **RateLimitFilter.kt** entirely. Added **RateLimiterConfig.kt** to configure Spring Boot, Spring Cloud Gateway, and Caffeine. Refactored integration, MVC and filter tests to support the new framework routing.
 
 ## 3. Technical decisions
 
@@ -95,21 +97,21 @@ Examples of URLs used to test the functionality:
 - http://127.0.0.1:8080/?name=Berta&lang=es: Provides a greeting in the main web page in Spanish and personalized to Berta.
 
 ### Bonus
-I manually tested the 429 Too Many Requests response by triggering rapid requests in the browser, verifying the filter correctly halted the chain without UI rendering.
+I manually tested the 429 Too Many Requests response by triggering rapid requests in the browser, verifying the filter correctly limited the requests to 10 per minute.
 
 I also used the rate filter tests created to explicitly verify the threshold limits and exclusion rules, and to include them in CI.
 
 I resolved compilation and testing errors during the Gateway integration phase caused by Spring Cloud dependency issues and random port assignments mismatching the 8080 configuration used by the rate limiter.
 
 ## 5. AI disclosure
-- **Tools / skills:** GitHub Copilot in VS Code and DeepSeek-R1.
+- **Tools / skills:** GitHub Copilot in VS Code, DeepSeek-R1 and Gemini 2.5 Flash.
 
 - **Purpose:**
 
     - Help outline the backend changes before implementation.
     - Help identify the controller, template and existing tests affected by the server-side greeting requirement.
     - Suggest and assist the implementation of test cases for time and language selection.
-    - Assistance for documenting the code.
+    - Assistance for documenting the code and the report.
 
 - **Representative prompts:**
 
@@ -117,7 +119,7 @@ I resolved compilation and testing errors during the Gateway integration phase c
 
     - "Add KDoc documentation to this .kt file."
 
-- **Affected files/sections:** the implementation and documentation assistance affected `src/main/kotlin/service/GreetingService.kt`, `src/main/kotlin/controller/HelloController.kt`, test files `build.gradle.kts`, `RateLimiterConfig.kt` and `REPORT.md`.
+- **Affected files/sections:** the implementation and documentation assistance affected `src/main/kotlin/service/GreetingService.kt`, `src/main/kotlin/controller/HelloController.kt`, test files, `build.gradle.kts`, `RateLimiterConfig.kt` and `REPORT.md`.
 
 - **Validation steps:** I reviewed the generated code changes and ran `./gradlew check`. As it failed the first time, I fixed the old test calls for no compilation failure and ran the test command again, successfully. For the bonus part, I had to fix compilation and dependencies errors for a successful execution. I also ran the project checks before submission and reviewed the final diff.
 
