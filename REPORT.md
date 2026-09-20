@@ -39,7 +39,7 @@ To add the new functionality I changed the controller file, added a service file
 
 I made the additions in three different branches.
 
-- ***feature/traffic_control* branch:** Added **RateLimitFilter.kt** mapped globally to intercept all routes. Removed a 2-second periodic polling function from **http-debug.js** to avoid false positives in the filter. Updated **ci.yml** to trigger continuous integration on all `feature/*` branches. Added **RateLimitFilterTest.kt**.
+- ***feature/traffic_control* branch:** Added **RateLimitFilter.kt** mapped globally to intercept all routes. Removed a 2-second periodic polling function from **http-debug.js** to avoid false positives in the filter. Updated **ci.yml** to trigger continuous integration on all `feature/*` branches. Added **RateLimitFilterTest.kt** and modified MVC and integration tests to exclude the filter.
 - ***feature/traffic_control_bucket4j* branch:** Modified **RateLimitFilter.kt** to replace manual timestamp maps with Bucket4j buckets.
 - ***feature/traffic_control_gateway* branch:** Removed **RateLimitFilter.kt** entirely. Added **RateLimiterConfig.kt** to configure Spring Boot, Spring Cloud Gateway, and Caffeine. Refactored integration, MVC and filter tests to support the new framework routing.
 
